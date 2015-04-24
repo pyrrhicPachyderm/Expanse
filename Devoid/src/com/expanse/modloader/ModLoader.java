@@ -1,4 +1,4 @@
-package com.devoid.modloader;
+package com.expanse.modloader;
 
 public class ModLoader {
 	
