@@ -1,15 +1,11 @@
 package com.expanse.launch;
 
-import com.expanse.ai.AI;
-import com.expanse.generation.Generation;
-import com.expanse.modloader.ModLoader;
-import com.expanse.render.Render;
-import com.expanse.tick.Tick;
+import java.io.File;
 
 public class Launch {
 	
 	public static void main(){
-		
+		System.setProperty("org.lwjgl.librarypath", new File("lib/natives").getAbsolutePath());
 	}
 	
 }
