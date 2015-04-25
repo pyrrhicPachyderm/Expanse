@@ -1,18 +1,14 @@
 package com.expanse.modloader;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.expanse.exception.ModUnsatisfiedDependencyException;
 import com.expanse.modapi.BaseMod;
-import com.expanse.modapi.Mod;
 import com.expanse.modapi.ModRegistry;
 
 public class ModLoader {
@@ -20,12 +16,10 @@ public class ModLoader {
 	static ExecutorService threadPool = Executors.newFixedThreadPool(64);
 	
 	static List<Future<BaseMod>> futureList = new ArrayList<Future<BaseMod>>();
-	static ArrayList<String> sortedList;
-	static ArrayList<String> unsortedList = new ArrayList<String>();
-	static TreeMap<String, BaseMod> modList = new TreeMap<String, BaseMod>();
+	static List<BaseMod> modList = new ArrayList<BaseMod>();
 	
 	@SuppressWarnings("rawtypes")
-	public static void loadMods(String path) throws ModUnsatisfiedDependencyException{
+	public static void loadMods(String path){
 		
 		List<Class> classes = ModDiscovery.findClassPathMods();
 		
@@ -51,43 +45,30 @@ public class ModLoader {
 		
 		for(int iterator = 0; iterator < futureList.size(); iterator++){
 			try {
-				BaseMod currentMod = futureList.get(iterator).get();
-				Class clazz = currentMod.getClass();
-				Annotation[] annotations = clazz.getAnnotations();
-				Mod modAnnotation = null;
-				
-				for(int it = 0; it < annotations.length; it++){
-				    if(annotations[it] instanceof Mod){
-				        modAnnotation = (Mod) annotations[it];
-				    }
-				}
-				unsortedList.add(modAnnotation.modID());
-				modList.put(modAnnotation.modID(), currentMod);
-				ModChecker.addMod(modAnnotation.modID(), currentMod.getDependencies());
+				modList.add(futureList.get(iterator).get());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
 		}
-		sortedList = ModChecker.sortMods();
 	}
 	
 	public static void preInitMods(){
 		for(int iterator = 0; iterator < modList.size(); iterator++){
-			modList.get(sortedList.get(iterator));
+			modList.get(iterator).preInit();
 		}
 	}
 	
 	public static void initMods(){
 		for(int iterator = 0; iterator < modList.size(); iterator++){
-			modList.get(sortedList.get(iterator));
+			modList.get(iterator).init();
 		}
 	}
 	
 	public static void postInitMods(){
 		for(int iterator = 0; iterator < modList.size(); iterator++){
-			modList.get(sortedList.get(iterator));
+			modList.get(iterator).postInit();
 		}
 	}
 	
