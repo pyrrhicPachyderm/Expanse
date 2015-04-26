@@ -2,7 +2,7 @@ package com.expanse.modapi;
 
 import java.util.ArrayList;
 
-public interface BaseMod {
+public interface IMod {
 	
 	void preInit();
 	void init();

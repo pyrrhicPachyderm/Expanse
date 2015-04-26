@@ -5,11 +5,11 @@ import java.util.concurrent.Callable;
 
 import com.expanse.exception.ModDuplicateException;
 import com.expanse.exception.ModMissingAnnotationException;
-import com.expanse.modapi.BaseMod;
+import com.expanse.modapi.IMod;
 import com.expanse.modapi.Mod;
 import com.expanse.modapi.ModRegistry;
 
-public class ModProcessor implements Callable<BaseMod>{
+public class ModProcessor implements Callable<IMod>{
 
 	@SuppressWarnings("rawtypes")
 	Class classToBeLoaded;
@@ -20,9 +20,9 @@ public class ModProcessor implements Callable<BaseMod>{
 	}
 	
 	@Override
-	public BaseMod call() throws ModDuplicateException, ModMissingAnnotationException{
+	public IMod call() throws ModDuplicateException, ModMissingAnnotationException{
 		
-		BaseMod result = null;
+		IMod result = null;
 		Annotation[] annotations = this.classToBeLoaded.getAnnotations();
 		Mod modAnnotation = null;
 		
@@ -46,8 +46,8 @@ public class ModProcessor implements Callable<BaseMod>{
 			Object obj = null;
 			try {
 				obj = this.classToBeLoaded.newInstance();
-				if(obj instanceof BaseMod){
-					result = (BaseMod) obj;
+				if(obj instanceof IMod){
+					result = (IMod) obj;
 				}
 			} catch (InstantiationException e) {
 				System.out.println("Skipping non-mod class");
@@ -67,7 +67,7 @@ public class ModProcessor implements Callable<BaseMod>{
 			}
 			if(instance != null){
 				
-				if(instance instanceof BaseMod){
+				if(instance instanceof IMod){
 					throw new ModMissingAnnotationException("Candidate Mod: " + classToBeLoaded.getName() + " Is Missing Necessary Annotation, skipping.");
 				}
 				

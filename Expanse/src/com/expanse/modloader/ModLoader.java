@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.expanse.exception.ModUnsatisfiedDependencyException;
-import com.expanse.modapi.BaseMod;
+import com.expanse.modapi.IMod;
 import com.expanse.modapi.Mod;
 import com.expanse.modapi.ModRegistry;
 
@@ -19,10 +19,10 @@ public class ModLoader {
 
 	static ExecutorService threadPool = Executors.newFixedThreadPool(64);
 	
-	static List<Future<BaseMod>> futureList = new ArrayList<Future<BaseMod>>();
+	static List<Future<IMod>> futureList = new ArrayList<Future<IMod>>();
 	static ArrayList<String> sortedList;
 	static ArrayList<String> unsortedList = new ArrayList<String>();
-	static TreeMap<String, BaseMod> modList = new TreeMap<String, BaseMod>();
+	static TreeMap<String, IMod> modList = new TreeMap<String, IMod>();
 	
 	@SuppressWarnings("rawtypes")
 	public static void loadMods(String path) throws ModUnsatisfiedDependencyException{
@@ -37,7 +37,7 @@ public class ModLoader {
 
 		for(int i = 0; i < classes.size(); i++){
 			ModProcessor processor = new ModProcessor(classes.get(i));
-			Future<BaseMod> future = threadPool.submit(processor);
+			Future<IMod> future = threadPool.submit(processor);
 			try {
 				if(future.get() != null){
 					futureList.add(future);
@@ -51,7 +51,7 @@ public class ModLoader {
 		
 		for(int iterator = 0; iterator < futureList.size(); iterator++){
 			try {
-				BaseMod currentMod = futureList.get(iterator).get();
+				IMod currentMod = futureList.get(iterator).get();
 				Class clazz = currentMod.getClass();
 				Annotation[] annotations = clazz.getAnnotations();
 				Mod modAnnotation = null;
