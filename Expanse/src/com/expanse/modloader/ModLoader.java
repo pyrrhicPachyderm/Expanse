@@ -74,20 +74,20 @@ public class ModLoader {
 	}
 	
 	public static void preInitMods(){
-		for(int iterator = 0; iterator < modList.size(); iterator++){
-			modList.get(sortedList.get(iterator));
+		for(int iterator = 0; iterator < sortedList.size(); iterator++){
+			modList.get(sortedList.get(iterator)).preInit();;
 		}
 	}
 	
 	public static void initMods(){
 		for(int iterator = 0; iterator < modList.size(); iterator++){
-			modList.get(sortedList.get(iterator));
+			modList.get(sortedList.get(iterator)).init();;
 		}
 	}
 	
 	public static void postInitMods(){
 		for(int iterator = 0; iterator < modList.size(); iterator++){
-			modList.get(sortedList.get(iterator));
+			modList.get(sortedList.get(iterator)).postInit();
 		}
 	}
 	
