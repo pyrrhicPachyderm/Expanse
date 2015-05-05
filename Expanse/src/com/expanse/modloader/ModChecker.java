@@ -61,7 +61,7 @@ public class ModChecker {
 	 Create a List of Topologically Sorted Mods From Dependencies so no Race-Conditions Occur 
 	 **/
 	public static ArrayList<String> sortMods(){
-		
+		// TODO: Add Acyclic Graph Checking
 		hasVisitedNode = new ArrayList<Boolean>();
 		for(int i = 0; i < ModRegistry.getNumModsRegistered(); i++){
 			hasVisitedNode.add(false);
