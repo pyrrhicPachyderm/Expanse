@@ -48,8 +48,6 @@ public class CallableClassLoader implements Callable<Class>{
 		URLClassLoader loader = new URLClassLoader(new URL[] {
 	            new URL("file://" + path)
 	    });
-	    System.out.println(path);
-	    System.out.println(className);
 	    Class loadedClass = loader.loadClass(className);
 	    loader.close();
 	    return loadedClass;

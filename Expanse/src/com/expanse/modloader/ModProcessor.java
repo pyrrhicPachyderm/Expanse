@@ -74,7 +74,7 @@ public class ModProcessor implements Callable<IMod>{
 			}
 			
 		}
-		
+	
 		return result;
 	}
 
