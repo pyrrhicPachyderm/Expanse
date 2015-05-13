@@ -1,21 +1,116 @@
 package com.expanse.modloader;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import com.expanse.exception.ModUnsatisfiedDependencyException;
+import com.expanse.modapi.IMod;
+import com.expanse.modapi.Mod;
+import com.expanse.modapi.ModRegistry;
+
 public class ModLoader {
+
+	static ExecutorService threadPool = Executors.newFixedThreadPool(64);
 	
-	public void findMods(){
+	static List<Future<IMod>> futureList = new ArrayList<Future<IMod>>();
+	static ArrayList<String> sortedList;
+	static ArrayList<String> unsortedList = new ArrayList<String>();
+	static TreeMap<String, IMod> modList = new TreeMap<String, IMod>();
+	
+	@SuppressWarnings("rawtypes")
+	public static void loadMods(String path) throws ModUnsatisfiedDependencyException{
 		
+		List<Class> classes = ModDiscovery.findClassPathMods();
+		
+		try {
+			classes.addAll(ModDiscovery.findExternalMods(path));
+		} catch (ClassNotFoundException | IOException e1) {
+			e1.printStackTrace();
+		}
+
+		for(int i = 0; i < classes.size(); i++){
+			ModProcessor processor = new ModProcessor(classes.get(i));
+			Future<IMod> future = threadPool.submit(processor);
+			try {
+				if(future.get() != null){
+					futureList.add(future);
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}	
+		}
+		
+		ModChecker.init();
+		
+		for(int iterator = 0; iterator < futureList.size(); iterator++){
+			try {
+				IMod currentMod = futureList.get(iterator).get();
+				System.out.println(futureList.get(iterator).isDone());
+				Class clazz = currentMod.getClass();
+				Annotation[] annotations = clazz.getAnnotations();
+				Mod modAnnotation = null;
+				
+				for(int it = 0; it < annotations.length; it++){
+				    if(annotations[it] instanceof Mod){
+				        modAnnotation = (Mod) annotations[it];
+				    }
+				}
+				unsortedList.add(modAnnotation.modID());
+				modList.put(modAnnotation.modID(), currentMod);
+				ModChecker.addMod(modAnnotation.modID(), currentMod.getDependencies());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+		threadPool.shutdown();
+		if(ModChecker.areModsMissing){
+			System.out.println("Missing Mods Were Found:\n");
+			String missingModsList = "";
+			boolean firstTry = true;
+			for(String mod : ModChecker.getMissingMods()){
+				if(firstTry){
+					System.out.println("	" + mod);
+					missingModsList.concat(mod);
+					continue;
+				}
+				System.out.println("	" + mod);
+				missingModsList.concat(", " + mod);
+			}
+			throw new ModUnsatisfiedDependencyException(missingModsList);
+		}
+		sortedList = ModChecker.sortMods();
 	}
 	
-	public void preInitMods(){
-		
+	public static void preInitMods(){
+		for(int iterator = 0; iterator < sortedList.size(); iterator++){
+			modList.get(sortedList.get(iterator)).preInit();
+		}
 	}
 	
-	public void initMods(){
-		
+	public static void initMods(){
+		for(int iterator = 0; iterator < sortedList.size(); iterator++){
+			modList.get(sortedList.get(iterator)).init();
+		}
 	}
 	
-	public void postInitMods(){
-		
+	public static void postInitMods(){
+		for(int iterator = 0; iterator < sortedList.size(); iterator++){
+			modList.get(sortedList.get(iterator)).postInit();
+		}
 	}
 	
+	public static void addModMetadata(String metadata[]){
+		ModRegistry.registerMod(metadata[0], metadata[1], metadata[2]);
+	}
 }
