@@ -33,14 +33,12 @@ public class ModDiscovery {
 			
 		}
 		
-		for(int i = 0; i < futures.size(); i++){
-			
+		for(Future<Class> currentFuture : futures){
 			try {
-				classes.add(futures.get(i).get());
+				classes.add(currentFuture.get());
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
-			
 		}
 		
 		threadPool.shutdown();
@@ -55,12 +53,10 @@ public class ModDiscovery {
 		List<String> jars = findJars(path);
 		List<Class> classes = new ArrayList<Class>();
 		
-		for(int iterator = 0; iterator < jars.size(); iterator++){
-			
-			if(jars.get(iterator).endsWith(".jar") || jars.get(iterator).endsWith(".zip")){
-				classes.addAll(loadClassesFromJar(jars.get(iterator)));
+		for(String currentJar : jars){
+			if(currentJar.endsWith(".jar") || currentJar.endsWith(".zip")){
+				classes.addAll(loadClassesFromJar(currentJar));
 			}
-			
 		}
 		
 		return classes;
@@ -71,28 +67,24 @@ public class ModDiscovery {
 	private static List<Class> loadClassesFromJar(String path) throws IOException, ClassNotFoundException{
 		
 		List<Class> classes = new ArrayList<Class>();
-		
-		if( path != null && path.endsWith(".jar") || path.endsWith(".zip")) {
 
-			File file = new File(path);
-			JarFileLoader loader = new JarFileLoader(new URL[]{file.toURI().toURL()});
-			loader.addURL(file.toURI().toURL());
-			
-		    URL jar = file.toURI().toURL();
-		    ZipInputStream zip = new ZipInputStream( jar.openStream());
-		    ZipEntry ze = null;
+		File file = new File(path);
+		JarFileLoader loader = new JarFileLoader(new URL[] { file.toURI()
+				.toURL() });
+		loader.addURL(file.toURI().toURL());
 
-		    while( ( ze = zip.getNextEntry() ) != null ) {
-		        String entryName = ze.getName();
-		        if( entryName.endsWith(".class") ) {
-		        	entryName = entryName.replace('/', '.');
-		        	entryName = entryName.substring(0, entryName.length() - 6);
-		        	
-		    		classes.add(loader.loadClass(entryName));
-		        }
-		    }
+		URL jar = file.toURI().toURL();
+		ZipInputStream zip = new ZipInputStream(jar.openStream());
+		ZipEntry ze = null;
 
-		 }
+		while ((ze = zip.getNextEntry()) != null) {
+			String entryName = ze.getName();
+			if (entryName.endsWith(".class")) {
+				entryName = entryName.replace('/', '.');
+				entryName = entryName.substring(0, entryName.length() - 6);
+				classes.add(loader.loadClass(entryName));
+			}
+		}
 		
 		return classes;
 		
@@ -108,16 +100,13 @@ public class ModDiscovery {
         if(directory.listFiles() != null){
         	fList = directory.listFiles();
         	
-            for (int i = 0; i < fList.length; i++) {
-                if (fList[i].isFile() && fList[i].getName().endsWith(".jar") || fList[i].getName().endsWith(".zip")) {
-                	
-                    resultList.add(fList[i].getAbsolutePath());
-                    
-                } else if (fList[i].isDirectory()) {
-                    resultList.addAll(findJars(fList[i].getAbsolutePath()));
-                }
-            }
-        	
+        	for (File current : fList){
+        		if(current.isFile() && current.getName().endsWith(".jar") || current.getName().endsWith(".zip")){
+        			resultList.add(current.getAbsolutePath());
+        		} else if (current.isDirectory()){
+        			resultList.addAll(findJars(current.getAbsolutePath()));
+        		}
+        	}
         }
         
         return resultList;
@@ -134,15 +123,13 @@ public class ModDiscovery {
         if(directory.listFiles() != null){
         	fList = directory.listFiles();
         	
-            for (int i = 0; i < fList.length; i++) {
-                if (fList[i].isFile() && fList[i].getName().endsWith(".class")) {
-                    resultList.add(fList[i]);
-                    
-                } else if (fList[i].isDirectory()) {
-                    resultList.addAll(findClassesInDirectory(fList[i].getAbsolutePath()));
-                }
-            }
-        	
+        	for(File currentFile : fList){
+        		if(currentFile.isFile() && currentFile.getName().endsWith(".class")){
+        			resultList.add(currentFile);
+        		} else if (currentFile.isDirectory()){
+        			resultList.addAll(findClassesInDirectory(currentFile.getAbsolutePath()));
+        		}
+        	}
         }
         
         return resultList;

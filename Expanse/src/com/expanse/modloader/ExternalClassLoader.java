@@ -43,10 +43,8 @@ public class ExternalClassLoader implements Callable<List<Class>>{
 	    	
 	    }
 	    
-	    for(int iterator = 0; iterator < futures.size(); iterator++){
-	    	
-	    	classes.addAll(futures.get(iterator).get());
-	    	
+	    for(Future<List<Class>> currentFuture : futures){
+	    	classes.addAll(currentFuture.get());
 	    }
 	    
 		return classes;

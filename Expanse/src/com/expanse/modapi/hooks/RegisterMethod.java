@@ -7,7 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Hook {
+public @interface RegisterMethod {
 	@SuppressWarnings("rawtypes")
 	Class classHooked();
+	boolean shouldCancel();
 }

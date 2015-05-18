@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
 
+import com.expanse.exception.ModDependencyError;
 import com.expanse.exception.ModNotFoundException;
 import com.expanse.exception.ModUnsatisfiedDependencyException;
 import com.expanse.modapi.ModRegistry;
@@ -13,27 +14,28 @@ public class ModChecker {
 	static boolean areModsMissing = false;
 	static ArrayList<String> missingMods = new ArrayList<String>();
 	static ArrayList<ArrayList<Integer>> adjList;
-	static ArrayList<ArrayList<Integer>> reverseAdj;
-	private static ArrayList<Integer> sortedList = new ArrayList<Integer>();
 	private static ArrayList<String> modOrder = new ArrayList<String>();
 	
 	public static void init(){
 		adjList = new ArrayList<ArrayList<Integer>>();
-		reverseAdj = new ArrayList<ArrayList<Integer>>();
 		for(int i = 0; i < ModRegistry.getNumModsRegistered(); i++){
 			adjList.add(new ArrayList<Integer>());
-			reverseAdj.add(new ArrayList<Integer>());
 		}
 	}
 	
 	public static void addMod(String modID, ArrayList<String> dependencyList) throws ModUnsatisfiedDependencyException{
 		try {
 			int modNumericID = ModRegistry.getModNumericID(modID);
+			
+			for(String dependency : dependencyList){
+				int dependencyID = ModRegistry.getModNumericID(dependency);
+				adjList.get(dependencyID).add(modNumericID);
+			}
+			
 			for(int i = 0; i < dependencyList.size(); i++){
 				String dependency = dependencyList.get(i);
 				int dependencyID = ModRegistry.getModNumericID(dependency);
 				adjList.get(dependencyID).add(modNumericID);
-				reverseAdj.get(modNumericID).add(dependencyID);
 			}
 		} catch (ModNotFoundException e) {
 			areModsMissing = true;
@@ -51,9 +53,9 @@ public class ModChecker {
 	
 	/**
 	 Create a List of Topologically Sorted Mods From Dependencies so no Race-Conditions Occur 
+	 * @throws ModDependencyError 
 	 **/
-	public static ArrayList<String> sortMods(){
-		// TODO: Add Acyclic Graph Checking
+	public static ArrayList<String> sortMods() throws ModDependencyError{
 		ArrayList<Boolean> hasVisitedNode = new ArrayList<Boolean>();
 		ArrayList<Integer> indegrees = new ArrayList<Integer>();
 		
@@ -89,6 +91,10 @@ public class ModChecker {
 			}
 		}
 		
+		if(q.isEmpty() && ModRegistry.getNumModsRegistered() != 0){
+			throw new ModDependencyError();
+		}
+		
 		while(!q.isEmpty()){
 			int currVertex = q.remove();
 			modOrder.add(ModRegistry.getModID(currVertex));
@@ -101,6 +107,9 @@ public class ModChecker {
 					}
 				}
 			}
+		}
+		if(modOrder.size() != ModRegistry.getNumModsRegistered()){
+			throw new ModDependencyError();
 		}
 		return modOrder;
 	}
