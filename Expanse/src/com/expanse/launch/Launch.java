@@ -2,8 +2,6 @@ package com.expanse.launch;
 
 import java.io.File;
 
-import com.expanse.modloader.ModLoader;
-
 public class Launch {
 	
 	public static void main(String[] args){
