@@ -4,12 +4,15 @@ import java.io.File;
 
 import com.expanse.exception.ModDependencyError;
 import com.expanse.exception.ModUnsatisfiedDependencyException;
+import com.expanse.graphics.GraphicsManager;
 import com.expanse.modloader.ModLoader;
 
 public class Launch {
 	
 	public static void main(String[] args){
-		System.setProperty("org.lwjgl.librarypath", new File("lib/natives").getAbsolutePath());
+		System.setProperty("org.lwjgl.librarypath", new File("lib/lwjgl/native").getAbsolutePath());
+		GraphicsManager graphics = new GraphicsManager();
+		graphics.run();
 		try {
 			try {
 				ModLoader.loadMods("/Users/chrisjung/mods");
