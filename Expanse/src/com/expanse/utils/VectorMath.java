@@ -2,11 +2,11 @@ package com.expanse.utils;
 
 public class VectorMath {
 	
-	public Vector2f getNormalized(Vector2f vec){
+	public static Vector2f getNormalized(Vector2f vec){
 		return divideByScalar(vec, getMagnitude(vec));
 	}
 	
-	public float getMagnitude(Vector2f vec){
+	public static float getMagnitude(Vector2f vec){
 		return (float) Math.sqrt(vec.x*vec.x+vec.y*vec.y);
 	}
 	
