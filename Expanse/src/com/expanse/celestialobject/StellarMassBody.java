@@ -9,7 +9,7 @@ public class StellarMassBody extends CelestialBody{
 	
 	public boolean isWormhole;
 	
-	public StellarMassBody(String name, Resources remainingR, float orbitalR, float r, float m, boolean isW){
+	public StellarMassBody(String name, Resources remainingR, double orbitalR, double r, double m, boolean isW){
 		this.owningPlayer = -1;
 		this.objectName = name;
 		this.remainingResources = remainingR;
@@ -19,7 +19,7 @@ public class StellarMassBody extends CelestialBody{
 		this.isWormhole = isW;
 	}
 	
-	public float getLuminosity(){ //in solar luminosities
+	public double getLuminosity(){ //in solar luminosities
 		if(radius == 0){ //black hole
 			return 0;
 		}

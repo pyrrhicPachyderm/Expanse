@@ -4,7 +4,7 @@ import com.expanse.resources.Resources;
 
 public class GasPlanetaryMassBody extends PlanetaryMassBody{
 	
-	public GasPlanetaryMassBody(String name, Resources remainingR, float orbitalR, float r, float m){
+	public GasPlanetaryMassBody(String name, Resources remainingR, double orbitalR, double r, double m){
 		this.owningPlayer = -1;
 		this.objectName = name;
 		this.remainingResources = remainingR;
