@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class CelestialNode {
 	public static final String orbitalRadiusUnit = "AU";
 	
-	protected float orbitalRadius; //in AU
+	protected double orbitalRadius; //in AU
 	
 	protected ArrayList<CelestialObject> orbitingObjects = new ArrayList<CelestialObject>(); //This should be maintained in order of ascending orbitalRadius
 	

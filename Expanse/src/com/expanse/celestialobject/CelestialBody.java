@@ -5,13 +5,13 @@ public class CelestialBody extends CelestialObject{
 	public static String massUnit;
 	public static String radiusUnit;
 
-	protected float radius;
+	protected double radius;
 	/*
 	0.05-220,000 Earth Radii total
 	0.05 - 25 Earth Radii for planetary mass
 	0.12 - 2000 Solar Radii for stellar mass
 	*/
-	protected float mass;
+	protected double mass;
 	/*
 	x - y Earth Masses total
 	0.0001 - 10000 Earth Masses for planetary mass
