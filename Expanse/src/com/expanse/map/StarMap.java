@@ -15,3 +15,4 @@ public class StarMap {
 		this.systems.remove(this.systems.size()-1);
 	}
 }
+
