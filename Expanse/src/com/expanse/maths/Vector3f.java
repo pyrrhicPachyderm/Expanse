@@ -4,75 +4,82 @@ import com.expanse.exception.VectorDimensionException;
 
 public class Vector3f {
 
-	public float[] vec = {0, 0, 0};
+	public float x = 0;
+	public float y = 0;
+	public float z = 0;
 	
 	public Vector3f(){}
 	
-	public Vector3f(float[] vector) throws VectorDimensionException{
-		
-		if(vector.length != 3){
-			throw new VectorDimensionException();
-		}
-		
-		vec = vector;
+	public Vector3f(float y0, float y1, float y2){
+		x = y0;
+		y = y1;
+		z = y2;
 	}
 	
-	public Vector3f(float y0, float y1, float y2){
-		vec[0] = y0;
-		vec[1] = y1;
-		vec[2] = y2;
+	public float[] asArray(){
+		return new float[]{x, y, z};
 	}
 	
 	public static float magnitude(Vector3f vector){
-		return (float) Math.sqrt((vector.vec[0] *vector.vec[0]) + (vector.vec[1] * vector.vec[1]) + (vector.vec[2] * vector.vec[2	]));
+		return (float) Math.sqrt((vector.x *vector.x) + (vector.y * vector.y) + (vector.z * vector.z));
 	}
 	
 	public static Vector3f add(Vector3f vec1, Vector3f vec2){
 		return new Vector3f(
-					vec1.vec[0] + vec2.vec[0],
-					vec1.vec[1] + vec2.vec[1],
-					vec1.vec[2] + vec2.vec[2]
+					vec1.x + vec2.x,
+					vec1.y + vec2.y,
+					vec1.z + vec2.z
 				);
 	}
 	
 	public static Vector3f subtract(Vector3f vec1, Vector3f vec2){
 		return new Vector3f(
-					vec1.vec[0] - vec2.vec[0],
-					vec1.vec[1] - vec2.vec[1],
-					vec1.vec[2] - vec2.vec[2]
+					vec1.x - vec2.x,
+					vec1.y - vec2.y,
+					vec1.z - vec2.z
 				);
 	}
 
 	public static Vector3f multiply(Matrix3f mat, Vector3f vec){
 		float[] temp = {0, 0, 0};
+		float[] t = {vec.x, vec.y, vec.z};
 		
 		for(int i = 0; i < 3; i++){
 			for(int k = (int) (temp[i] = 0); k < 3; k++){
-				temp[i] += mat.matrix[i][k] * vec.vec[k];
+				temp[i] += mat.matrix[i][k] * t[k];
 			}
+			
+			
+			
 		}
-		
-		try {
-			return new Vector3f(temp);
-		} catch (VectorDimensionException e) {}
-		//Unreachable Code
-		return null;
+
+		return new Vector3f(temp[0], temp[1], temp[2]);
 	}
 	
-	public static Vector3f dot(float scalar, Vector3f vec){
+	public static Vector3f multiply(float scalar, Vector3f vec){
 		return new Vector3f(
-					vec.vec[0] * scalar,
-					vec.vec[1] * scalar,
-					vec.vec[2] * scalar
+					vec.x * scalar,
+					vec.y * scalar,
+					vec.z * scalar
 				);
+	}
+	
+	public static float dot(Vector3f vec1, Vector3f vec2){
+		return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 	}
 	
 	public static Vector3f cross(Vector3f vec1, Vector3f vec2){
-		return new Vector3f(
-					vec1.vec[1] * vec2.vec[2] - vec1.vec[2] * vec2.vec[1],
-					vec1.vec[2] * vec2.vec[0] - vec1.vec[0] * vec2.vec[2],
-					vec1.vec[0] * vec2.vec[1] - vec1.vec[1] * vec2.vec[0]
+		Vector3f res = new Vector3f(
+					vec1.y * vec2.z - vec1.z * vec2.y,
+					vec1.z * vec2.x - vec1.x * vec2.z,
+					vec1.x * vec2.y - vec1.y * vec2.x
 				);
+		Vector3f up = new Vector3f(0, 1, 0);
+		
+		if(dot(res, up) < 0){
+			return multiply(-1, res);
+		}
+		return res;
 	}
 	
 }
