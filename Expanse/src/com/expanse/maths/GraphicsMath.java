@@ -56,4 +56,8 @@ public class GraphicsMath {
 		return false;
 	}
 	
+	public static Line findLineEquation(Vector3f pnt1,Vector3f pnt2){
+		return new Line(pnt1, Vector3f.subtract(pnt1, pnt2));
+	}
+	
 }
