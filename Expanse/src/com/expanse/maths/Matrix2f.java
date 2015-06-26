@@ -23,7 +23,7 @@ public class Matrix2f {
 		matrix = mat;
 	}
 	
-	public Matrix2f(float x0y0, float x0y1, float x1y0, float x1y1){
+	public Matrix2f(float x0y0, float x1y0, float x0y1, float x1y1){
 		matrix[0][0] = x0y0;
 		matrix[0][1] = x0y1;
 		matrix[1][0] = x1y0;

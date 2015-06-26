@@ -31,17 +31,17 @@ public class Matrix3f {
 		matrix = mat;
 	}
 	
-	public Matrix3f(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22){
+	public Matrix3f(float m00, float m10, float m20, float m01, float m11, float m21, float m02, float m12, float m22){
 		matrix[0][0] = m00;
-		matrix[0][1] = m01;
-		matrix[0][2] = m02;
-		
 		matrix[1][0] = m10;
-		matrix[1][1] = m11;
-		matrix[1][2] = m12;
-		
 		matrix[2][0] = m20;
+		
+		matrix[0][1] = m01;
+		matrix[1][1] = m11;
 		matrix[2][1] = m21;
+
+		matrix[0][2] = m02;
+		matrix[1][2] = m12;
 		matrix[2][2] = m22;
 	}
 	
@@ -155,7 +155,7 @@ public class Matrix3f {
 	}
 	
 	public static float determinant(Matrix3f mat){
-		return (mat.matrix[0][0] * mat.matrix[1][1] * mat.matrix[2][2] + mat.matrix[0][1] * mat.matrix[1][2] * mat.matrix[2][0] + mat.matrix[0][2] * mat.matrix[1][0] * mat.matrix[2][1]) - (mat.matrix[0][2] * mat.matrix[1][1] * mat.matrix[2][0] + mat.matrix[0][1] * mat.matrix[1][0] * mat.matrix[2][2] + mat.matrix[0][0] * mat.matrix[1][2] * mat.matrix[2][1]);
+		return (mat.matrix[2][2] * mat.matrix[1][1] * mat.matrix[0][0] + mat.matrix[2][1] * mat.matrix[1][0] * mat.matrix[2][0] + mat.matrix[2][0] * mat.matrix[1][2] * mat.matrix[0][1]) - (mat.matrix[2][0] * mat.matrix[1][1] * mat.matrix[0][2] + mat.matrix[2][1] * mat.matrix[1][2] * mat.matrix[0][0] + mat.matrix[2][2] * mat.matrix[1][0] * mat.matrix[0][1]);
 	}
 	
 }
